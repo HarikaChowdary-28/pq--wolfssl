@@ -1,0 +1,80 @@
+did configurarion of pq-wolfssl
+
+did benchmarking
+
+did certgen make
+
+in line 20942 added wc_getpubkeyderfromcert() funct in wolfcrypt/src/asn.c
+
+in line 569 added wc_getpubkeyderfromcert() in wolfssl/wolfcrypt/asn_public.h
+
+made changes in 19500 in wolfcrypt/src/asn.c
+
+-----------------------------------------------------------
+
+comment 12170 line in asn.c
+
+change line 12197 into this -->
+
+           ret = PemToDer(pem, pemSz, PRIVATEKEY_TYPE, &der, NULL, info, NULL);
+           
+add this function from line 20942 - 20976
+
+int wc_GetPubKeyDerFromCert(struct DecodedCert* cert,
+                            byte* derKey, word32* derKeySz)
+{
+    int ret = 0;
+
+    /* derKey may be NULL to return length only */
+    if (cert == NULL || derKeySz == NULL ||
+        (derKey != NULL && *derKeySz == 0)) {
+        return BAD_FUNC_ARG;
+    }
+
+    if (cert->publicKey == NULL) {
+        WOLFSSL_MSG("DecodedCert does not contain public key\n");
+        return BAD_FUNC_ARG;
+    }
+
+    /* if derKey is NULL, return required output buffer size in derKeySz */
+    if (derKey == NULL) {
+        *derKeySz = cert->pubKeySize;
+        ret = LENGTH_ONLY_E;
+    }
+
+    if (ret == 0) {
+        if (cert->pubKeySize > *derKeySz) {
+            WOLFSSL_MSG("Output buffer not large enough for public key DER");
+            ret = BAD_FUNC_ARG;
+        }
+        else {
+            XMEMCPY(derKey, cert->publicKey, cert->pubKeySize);
+            *derKeySz = cert->pubKeySize;
+        }
+    }
+
+    return ret;
+}
+
+
+------------
+asn_public.h
+
+in line 569-570 add these lines
+
+    struct DecodedCert;
+    WOLFSSL_API int wc_GetPubKeyDerFromCert(struct DecodedCert* cert,byte* derKey, word32* derKeySz);    
+    
+    
+--------------
+settings.h
+
+from line 59-65
+
+ #ifdef HAVE_SPHINCS
+    #define SPX_TYPE SHA256_128F_SIMPLE
+    #define SPX_TYPE SHA256_128S_SIMPLE    
+   // #define SPX_TYPE SHA256_192F_SIMPLE
+    /* available types  SHA256_128S_SIMPLE, SHA256_192S_SIMPLE */
+    #define SPX_MODE           1  /* available modes 1, 3 */
+#endif

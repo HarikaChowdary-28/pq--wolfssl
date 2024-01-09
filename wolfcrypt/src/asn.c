@@ -12167,7 +12167,7 @@ static WC_INLINE int OurPasswordCb(char* passwd, int sz, int rw, void* userdata)
 int wc_KeyPemToDer(const unsigned char* pem, int pemSz,
                         unsigned char* buff, int buffSz, const char* pass)
 {
-    int            eccKey = 0;
+    //int            eccKey = 0;
     int            ret;
     DerBuffer*     der = NULL;
 #ifdef WOLFSSL_SMALL_STACK
@@ -12194,7 +12194,7 @@ int wc_KeyPemToDer(const unsigned char* pem, int pemSz,
     info->passwd_cb = OurPasswordCb;
     info->passwd_userdata = (void*)pass;
 
-    ret = PemToDer(pem, pemSz, PRIVATEKEY_TYPE, &der, NULL, info, &eccKey);
+    ret = PemToDer(pem, pemSz, PRIVATEKEY_TYPE, &der, NULL, info, NULL);
 
 #ifdef WOLFSSL_SMALL_STACK
     XFREE(info, NULL, DYNAMIC_TYPE_ENCRYPTEDINFO);
@@ -19419,7 +19419,7 @@ int wc_XmssPrivateKeyDecode(const byte* input, word32* inOutIdx,
         return ASN_PARSE_E;
 
     return ret;
-}
+} 
 
 
 int wc_XmssPublicKeyDecode(const byte* input, word32* inOutIdx,
@@ -19508,7 +19508,7 @@ static int wc_BuildXmssKeyDer(XmssKey* key, byte* output, word32 inLen,
     /* priv */
     XMEMCPY(output + idx, priv, privSz);
     idx += privSz;
-
+    
     XFREE(priv, NULL, DYNAMIC_TYPE_TMP_BUFFER);
 
     return idx;
@@ -20939,6 +20939,41 @@ int wc_ParseCertPIV(wc_CertPIV* piv, const byte* buf, word32 totalSz)
 
 #endif /* WOLFSSL_CERT_PIV */
 
+int wc_GetPubKeyDerFromCert(struct DecodedCert* cert,
+                            byte* derKey, word32* derKeySz)
+{
+    int ret = 0;
+
+    /* derKey may be NULL to return length only */
+    if (cert == NULL || derKeySz == NULL ||
+        (derKey != NULL && *derKeySz == 0)) {
+        return BAD_FUNC_ARG;
+    }
+
+    if (cert->publicKey == NULL) {
+        WOLFSSL_MSG("DecodedCert does not contain public key\n");
+        return BAD_FUNC_ARG;
+    }
+
+    /* if derKey is NULL, return required output buffer size in derKeySz */
+    if (derKey == NULL) {
+        *derKeySz = cert->pubKeySize;
+        ret = LENGTH_ONLY_E;
+    }
+
+    if (ret == 0) {
+        if (cert->pubKeySize > *derKeySz) {
+            WOLFSSL_MSG("Output buffer not large enough for public key DER");
+            ret = BAD_FUNC_ARG;
+        }
+        else {
+            XMEMCPY(derKey, cert->publicKey, cert->pubKeySize);
+            *derKeySz = cert->pubKeySize;
+        }
+    }
+
+    return ret;
+}
 
 
 #ifdef HAVE_SMIME

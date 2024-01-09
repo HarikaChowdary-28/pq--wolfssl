@@ -566,6 +566,8 @@ WOLFSSL_API void wc_FreeDer(DerBuffer** pDer);
                                    unsigned char*, int, const char*);
     WOLFSSL_API int wc_CertPemToDer(const unsigned char*, int,
                                     unsigned char*, int, int);
+    struct DecodedCert;
+    WOLFSSL_API int wc_GetPubKeyDerFromCert(struct DecodedCert* cert,byte* derKey, word32* derKeySz);                              
 #endif /* WOLFSSL_PEM_TO_DER */
 
 #if defined(WOLFSSL_CERT_EXT) || defined(WOLFSSL_PUB_PEM_TO_DER)

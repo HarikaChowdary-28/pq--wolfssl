@@ -19,7 +19,7 @@
 #include <wolfssl/wolfcrypt/sphincs_sha256.h>
 #include <wolfssl/wolfcrypt/sphincs.h>
 #include <wolfssl/wolfcrypt/sphincs_address.h>
-
+uint8_t state_seeded[40]={0};
 /**
  * Takes an array of inblocks concatenated arrays of SPX_N bytes.
  */
