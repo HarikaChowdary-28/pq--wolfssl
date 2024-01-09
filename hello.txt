@@ -1,0 +1,151 @@
+wolfssl/wolfssl-5.5.1/pq-wolfssl
+wolfssl/wolfssl-5.5.1/wolfssl-examples
+wolfssl/wolfssl-5.5.1/certgen
+wolfssl/wolfssl-5.5.1/client-server
+
+git clone https://github.com/wolfSSL/wolfssl.git --> wolfssl-5.5.1
+./configure --enable-all
+make
+sudo make install
+
+https://github.com/boschresearch/pq-wolfSSL.git -->pq-wolfssl
+chmod +x autogen.sh
+./autogen.sh
+
+./configure --with-liboqs CFLAGS="-O2 -DWOLFSSL_HAVE_SP_ECC -DWOLFSSL_HAVE_SP_DH -DWC_NO_HARDEN" --enable-tls13 --disable-tlsv12 --disable-oldtls --enable-falcon --enable-dilithium --enable-xmss --enable-sphincs --enable-kyber --enable-keygen --enable-crypttests --disable-rsa --enable-dh --enable-aescbc --disable-poly1305 --disable-chacha --disable-des3 --disable-md5 --disable-sha --disable-sha224 --enable-sha384 --enable-sha512 --enable-sha3 --disable-eccshamir --enable-certreq --enable-certgen --enable-keygen --disable-fastmath --enable-sp-math-all --disable-asm --disable-errorstrings --enable-opensslextra --enable-pwdbased
+
+make
+remove -Werror from make file
+add 'extern' infront of uint8_t state_seeded[40]; in line 47 in wolfssl/wolfcrypt/sphincs_sha256.h file
+declare 'uint8_t state_seeded[40]={0};' in line 22 in wolfcrypt/src/sphincs_thash_sha256.c file
+make
+sudo make install
+
+remove lines 77-85,106-111,184-188 in m4/ax_harden_compiler_flags.m4 file
+autoreconf --install --force --verbose
+sudo ldconfig
+
+=================================================================================
+
+certgen folder
+wolfssl-5.5.1/certgen
+make clean
+make
+ remove !defined(XMSS_FUNC) from line 381 in client.c and line 402 in server.c for getting XMSS certs
+ 
+./certgen out=Dilithium root=DILITHIUM 2 ica=DILITHIUM 2 leaf=DILITHIUM 2
+./certgen out=xmss root=XMSS 1 ica=XMSS 1 leaf=XMSS 1
+ create a folder certs in certgen and dump the certs developed for algorithm in that created folder
+
+./server out=xmss root=XMSS 1 ica=XMSS 1 leaf=XMSS 1 kem=KYBER 1
+./client ip=127.0.0.1 out=xmss root=XMSS 1 ica=XMSS 1 leaf=XMSS 1 kem=KYBER 1 iter=100
+
+for sphincs--
+1. Open settings.h file in pq-wolfSSL/wolfssl/wolfcrypt directory and enable SPX TYPE SHA256 128S SIMPLE for security
+level 1.
+2. Uncomment the line 61 and comment line 60 in settings.h file for sphincs-s.
+3. Run ./configure --enable-all, make, sudo make install in pq-wolfssl directory.
+4. Run sudo ldconfig
+5. Go to certgen directory.
+6. Run make. It is advised to run make clean command before executing make command.
+7. Run ./certgen out=test root=SPHINCS 1 ica=SPHINCS 1 leaf=SPHINCS 1 command to generate a certificate chain.
+
+=================================================================================
+client-server 
+wolfssl-5.5.1/client-server
+make clean 
+make
+
+create a certs folder in wolfssl-5.5.1/certgen and dump the certs folder from different scehemes in there 
+
+ex: certgen/dilithium/certs --> certgen/certs
+
+./server out=xmss root=XMSS 1 ica=XMSS 1 leaf=XMSS 1 kem=KYBER 1
+./client ip=127.0.0.1 out=xmss root=XMSS 1 ica=XMSS 1 leaf=XMSS 1 kem=KYBER 1 iter=100
+
+run in 2 different terminals
+=================================================================================
+
+to verify a certificate 
+
+
+wolfssl/wolfssl-5.5.1/wolfssl-examples/certmanager
+
+in pq-wolfssl run
+./configure  CFLAGS="-O2 -DWOLFSSL_HAVE_SP_ECC -DWOLFSSL_HAVE_SP_DH -DWC_NO_HARDEN" --enable-tls13 --disable-tlsv12 --disable-oldtls --enable-falcon --enable-dilithium --enable-xmss --enable-sphincs --enable-kyber --enable-keygen --enable-crypttests --disable-rsa --enable-dh --disable-aescbc --disable-poly1305 --disable-chacha --disable-des3 --disable-md5 --disable-sha --disable-sha224 --enable-sha384 --enable-sha512 --enable-sha3 --disable-eccshamir --enable-certreq --enable-certgen --enable-keygen --disable-fastmath --enable-sp-math-all --disable-asm --disable-errorstrings --enable-opensslextra
+ make 
+sudo make install
+
+ 
+in wolfssl-examples/certmanager
+copy the given certverify.c code given by sai,
+in wolfssl/wolfssl-5.5.1/certgen---take any certs you want to verify and combine both root-cert.pem and ica-cert.pem --> cat rootcert.pem icacert.pem > root.pem 
+dump these certs as it is "dilithium"folder in wolfssl-examples/certmanager folder 
+do the necessary path changes in line 37,132,224 
+
+in wolfssl-examples/certmanager
+ run make
+ ./certverify
+ 
+ 
+ I DID ALL THIS IN wolfssl/pq-wolfssl as an experiment
+ =================================================================================
+ to extract a public key
+ 
+ in wolfssl/pq-wolfssl run
+ ./configure --enable-dilithium CFLAGS="-DWOLFSSL_TEST_CERT -DWOLFSSL_DER_TO_PEM -DWOLFSSL_PUBLIC_MP" && make && sudo make install
+ 
+ in wolfssl/pq-wolfssl/wolfssl-examples/dil
+ 
+ make
+ g++ -o dil-decode dil-decode.c -L/path/to/libwolfssl_directory -lwolfssl
+ ./dil-decode >op.txt
+ 
+ =================================================================================
+Combined both verification of a certificate and extracting a public key
+
+in wolfssl/pq-wolfssl/wolfssl-example/certmanager
+
+written a code combined.c --> made necessary changes in makefile
+
+using same certs dilithium folder in certmanager -->
+make necessary path changes in combined.c
+in certmanager run 
+
+make
+./combined
+
+you will get pub_key.txt op file and vericiation successful msg in terminal.
+
+-------------
+gcc -o xmss-decode xmss-decode.c -g -Wall -I/usr/local/include -Os -L/usr/local/lib -lm -lwolfssl
+ 
+gcc -o xmss-secboot xmss-secboot.c -g -Wall -I/usr/local/include -Os -L/usr/local/lib -lm -lwolfssl
+
+gcc -o xmss-sign xmss-sign.c -g -Wall -I/usr/local/include -Os -L/usr/local/lib -lm -lwolfssl
+
+gcc -o xmss-combinedsign xmss-combinedsign.c -g -Wall -I/usr/local/include -Os -L/usr/local/lib -lm -lwolfssl
+
+gcc -o xmss-combinedverify xmss-combinedverify.c -g -Wall -I/usr/local/include -Os -L/usr/local/lib -lm -lwolfssl
+
+-------------------
+gcc -o dil-combinedsign dil-combinedsign.c -g -Wall -I/usr/local/include -Os -L/usr/local/lib -lm -lwolfssl
+
+gcc -o dil-combinedverify dil-combinedverify.c -g -Wall -I/usr/local/include -Os -L/usr/local/lib -lm -lwolfssl
+
+--------------------
+
+gcc -o fal-combinedsign fal-combinedsign.c -g -Wall -I/usr/local/include -Os -L/usr/local/lib -lm -lwolfssl
+
+gcc -o fal-combinedverify fal-combinedverify.c -g -Wall -I/usr/local/include -Os -L/usr/local/lib -lm -lwolfssl
+
+------------------
+
+
+gcc -o sp-combinedsign sp-combinedsign.c -g -Wall -I/usr/local/include -Os -L/usr/local/lib -lm -lwolfssl
+
+gcc -o sp-combinedverify sp-combinedverify.c -g -Wall -I/usr/local/include -Os -L/usr/local/lib -lm -lwolfssl
+
+
+ 
+ 
