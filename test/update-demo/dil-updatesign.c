@@ -164,7 +164,7 @@ int main(int argc, char** argv) {
     clock_t start, end;
     double cpu_time_used;
     start = clock();
-    ret = process_signature("servercert.pem", "serverkey.pem", "encrypted.txt", "upd-sign.txt");
+    ret = process_signature("servercert.pem", "serverkey.pem", "hmac-encrypted.txt", "upd-sign.txt");
     
     if (ret != 0) return ret;
     end = clock();

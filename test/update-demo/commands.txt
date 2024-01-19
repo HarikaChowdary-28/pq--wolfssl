@@ -1,0 +1,9 @@
+./aes-generate >aeskey.txt
+./hmac-generate >hmackey.txt
+./aes-file-encrypt -e 256 -i demo.txt -o demo-encrypt.txt
+./hmacex_file hmackey.txt demo.txt > hmactag.txt
+cat demo-encrypt.txt hmactag.txt > hmac-encrypted.txt
+
+./dil-updatesign
+./dil-updateverify
+./aes-file-encrypt -d 256 -i demo-encrypt.txt -o demo-decrypt.txt

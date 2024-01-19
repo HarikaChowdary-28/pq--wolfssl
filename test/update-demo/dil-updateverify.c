@@ -241,7 +241,7 @@ int main(int argc, char** argv) {
     double cpu_time_used;
         start = clock();
     // Process the first set of files
-    ret = process_verification("servercert.pem", "serverkey.pem", "encrypted.txt", "upd-sign.txt");
+    ret = process_verification("servercert.pem", "serverkey.pem", "hmac-encrypted.txt", "upd-sign.txt");
     if (ret != 0) return ret;
      end = clock();
        cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
