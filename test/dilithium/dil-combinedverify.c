@@ -15,7 +15,7 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
-#define BUFFER_SZ 60000
+#define BUFFER_SZ 80000
 
 #if defined(HAVE_ECC)
     #include <wolfssl/wolfcrypt/ecc.h>
@@ -42,8 +42,8 @@
 #include <wolfssl/wolfcrypt/dilithium_symmetric.h>
 
 
-#define MAX_PEM_CERT_SIZE 60000
-#define MAX_DER_KEY_SIZE  60000
+#define MAX_PEM_CERT_SIZE 80000
+#define MAX_DER_KEY_SIZE  80000
 
 
 static void check_ret(char *func_name, int ret) {
@@ -88,8 +88,8 @@ int cert1(void)
     WOLFSSL_CERT_MANAGER* cm = NULL;
     
 
-    const char* caCert     = "./DIL-2/certs/root.pem";
-    const char* verifyCert = "./DIL-2/certs/servercert.pem";
+    const char* caCert     = "./DIL-2_DIL-2_DIL-2/certs/root.pem";
+    const char* verifyCert = "./DIL-2_DIL-2_DIL-2/certs/servercert.pem";
     
 
     wolfSSL_Init();

@@ -49,23 +49,27 @@
     #define KYBER_MODE     1  /* available modes 1, 3 */
 #endif
 #ifdef HAVE_DILITHIUM
-    #define DILITHIUM_MODE 2  /* available modes 2, 3 */
+    #define DILITHIUM_MODE  2 /* available modes 2, 3 */
+    //#define DILITHIUM_MODE  3
 #endif
 
 #ifdef HAVE_FALCON
-    #define FALCON_MODE    1  /* available modes 1, 5 */
+    #define FALCON_MODE    1
+    //#define FALCON_MODE    5  /* available modes 1, 5 */
 #endif
 
 #ifdef HAVE_SPHINCS
-    #define SPX_TYPE SHA256_128F_SIMPLE
-    #define SPX_TYPE SHA256_128S_SIMPLE    
-    //#define SPX_TYPE SHA256_192F_SIMPLE
+      #define SPX_TYPE SHA256_128F_SIMPLE
+      #define SPX_TYPE SHA256_128S_SIMPLE    
+      //#define SPX_TYPE SHA256_192F_SIMPLE
+      //#define SPX_TYPE SHA256_192S_SIMPLE
     /* available types  SHA256_128S_SIMPLE, SHA256_192S_SIMPLE */
     #define SPX_MODE           1  /* available modes 1, 3 */
 #endif
 
 #ifdef HAVE_XMSS
-    #define XMSS_MODE      1  /* available modes 1, 5 */
+    #define XMSS_MODE       1 /* available modes 1, 5 */
+    //#define XMSS_MODE      5
 #endif
 
 #ifdef HAVE_ECC

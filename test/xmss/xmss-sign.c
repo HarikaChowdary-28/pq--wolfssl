@@ -12,7 +12,7 @@
 #include <wolfssl/ssl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#define BUFFER_SZ 60000
+#define BUFFER_SZ 100000
 
 #if defined(HAVE_ECC)
     #include <wolfssl/wolfcrypt/ecc.h>

@@ -129,7 +129,7 @@ int main()
 	------------------------------ */
 	
 	// Assigning values to KyberKey Objects
-	readByteArrayFromFile(key.priv, KYBER_SECRETKEYBYTES, "kyber_private_key.txt");
+	// readByteArrayFromFile(key.priv, KYBER_SECRETKEYBYTES, "kyber_private_key.txt");
 	// printByteArray(key.priv, KYBER_SECRETKEYBYTES, "Secret Key");
 	readByteArrayFromFile(key.pub, KYBER_PUBLICKEYBYTES, "kyber_public_key.txt");
 	// printByteArray(key.pub, KYBER_PUBLICKEYBYTES, "Public Key");
@@ -144,9 +144,9 @@ int main()
 		//printByteArray(key.ct, KYBER_CIPHERTEXTBYTES, "Cipher Text");
 		
 		writeByteArrayToFile(key.pub, KYBER_SSBYTES, "kyber_shared_secret.txt");
-		writeByteArrayToFile(key.priv, KYBER_CIPHERTEXTBYTES, "kyber_cipher_text.txt");
+		writeByteArrayToFile(key.ct, KYBER_CIPHERTEXTBYTES, "kyber_cipher_text.txt");
 	}
-	
+	/* 
 	// ----------------------------------------------
 	// ASSIGN THE CIPHER TEXT HARIKA GONNA SEND TO ME
 	// ----------------------------------------------
@@ -180,6 +180,8 @@ int main()
 	
 	
 	// wc_FreeKyberKey(&key);
+	
+	*/
 	
 	return 0;
 	

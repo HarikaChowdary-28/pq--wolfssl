@@ -34,7 +34,7 @@
 /* create new dirName */
 #include <sys/types.h>
 #include <sys/stat.h>
-#define BUFFER_SZ 60000
+#define BUFFER_SZ 100000
 
 #if defined(HAVE_ECC)
     #include <wolfssl/wolfcrypt/ecc.h>
@@ -63,10 +63,10 @@
 #define MAX_PEM_CERT_SIZE 60000
 #define MAX_DER_KEY_SIZE  60000
 
-#define CERT_FILE "icacert.pem"
-#define KEY_FILE  "icakey.pem"
+#define CERT_FILE "rootcert.pem"
+#define KEY_FILE  "rootkey.pem"
 
-#define MSG_FILE "f1.img.xz" // Define the file containing the message to sign
+#define MSG_FILE "f0.zip" // Define the file containing the message to sign
 
 static void check_ret(char *func_name, int ret) {
     if (ret != 0) {

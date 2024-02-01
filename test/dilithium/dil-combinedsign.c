@@ -119,7 +119,7 @@ int process_signature(const char* cert_file, const char* key_file, const char* m
     }
     // Decode the private key by taking the idx value, priv key in der format
     if (ret == 0) {
-        ret = wc_DilithiumPrivateKeyDecode(priv_der_buf, &idx, &priv_key, &priv_der_len);
+        ret = wc_DilithiumPrivateKeyDecode(priv_der_buf, &idx, &priv_key, priv_der_len);
         check_ret("wc_dilPrivateKeyDecode", ret);
     }
 

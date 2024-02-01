@@ -39,7 +39,7 @@
     #include <wolfssl/wolfcrypt/xmss_utils.h>
     #include <wolfssl/wolfcrypt/xmss_core.h>
 //define certificate size, key size
-#define BUFFER_SZ 60000    
+#define BUFFER_SZ 100000    
 #define MAX_PEM_CERT_SIZE 60000
 #define MAX_DER_KEY_SIZE  60000
 

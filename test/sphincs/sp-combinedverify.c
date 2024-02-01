@@ -15,7 +15,7 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
-#define BUFFER_SZ 60000
+#define BUFFER_SZ 100000
 
 #if defined(HAVE_ECC)
     #include <wolfssl/wolfcrypt/ecc.h>
@@ -92,8 +92,8 @@ int cert1(void)
     WOLFSSL_CERT_MANAGER* cm = NULL;
     
 
-    const char* caCert     = "./SP-1/certs/root.pem";
-    const char* verifyCert = "./SP-1/certs/servercert.pem";
+    const char* caCert     = "./SP-3_SP-3_SP-3/certs/root.pem";
+    const char* verifyCert = "./SP-3_SP-3_SP-3/certs/servercert.pem";
     
 
     wolfSSL_Init();

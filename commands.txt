@@ -146,6 +146,9 @@ gcc -o sp-combinedsign sp-combinedsign.c -g -Wall -I/usr/local/include -Os -L/us
 
 gcc -o sp-combinedverify sp-combinedverify.c -g -Wall -I/usr/local/include -Os -L/usr/local/lib -lm -lwolfssl
 
+---------------
+
+gcc -o myprog main.c -g -Wall -I/usr/local/include -Os -L/usr/local/lib -lm -lwolfssl
 
  
  
