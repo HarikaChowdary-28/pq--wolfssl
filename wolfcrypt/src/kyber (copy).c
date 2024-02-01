@@ -31,7 +31,7 @@
  *
  * Returns 0 if success
  */
-int crypto_kem_keypair(byte *pk, byte *sk, WC_RNG* rng)
+static int crypto_kem_keypair(byte *pk, byte *sk, WC_RNG* rng)
 {
     indcpa_keypair(pk, sk, rng);
 
@@ -53,7 +53,7 @@ int crypto_kem_keypair(byte *pk, byte *sk, WC_RNG* rng)
  *
  * Returns 0 if success
  */
-int crypto_kem_enc(byte* ct, byte* ss, byte* pk, WC_RNG* rng)
+static int crypto_kem_enc(byte* ct, byte* ss, byte* pk, WC_RNG* rng)
 {
     /* Buffers will contain key, coins */
     byte kr[2*KYBER_SYMBYTES];
@@ -81,7 +81,7 @@ int crypto_kem_enc(byte* ct, byte* ss, byte* pk, WC_RNG* rng)
  *
  * On failure, &key->ss parameter will contain a pseudo-random value.
  */
-int crypto_kem_dec(byte* ss, byte* ct, byte* sk)
+static int crypto_kem_dec(byte* ss, byte* ct, byte* sk)
 {
     byte cmp[KYBER_CIPHERTEXTBYTES];
     byte buf[2*KYBER_SYMBYTES];
