@@ -7,3 +7,7 @@ cat demo-encrypt.txt hmactag.txt > hmac-encrypted.txt
 ./dil-updatesign
 ./dil-updateverify
 ./aes-file-encrypt -d 256 -i demo-encrypt.txt -o demo-decrypt.txt
+
+
+gcc -o kyber-main main.c -g -Wall -I/usr/local/include -Os -L/usr/local/lib -lm -lwolfssl
+
