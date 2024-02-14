@@ -111,7 +111,7 @@ int main()
 	ret = wc_InitKyberKey(&key);
 	// printf("Integer: %d\n", ret);	IF 0 CONTINUE
 	
-	/* ------------------------------
+	
 	
 	// Generating kyber key pair
 	if(ret==0)
@@ -123,18 +123,18 @@ int main()
 		// printByteArray(key.priv, KYBER_SECRETKEYBYTES, "Private Key");
 		
 		writeByteArrayToFile(key.pub, KYBER_PUBLICKEYBYTES, "kyber_public_key.txt");
-		//writeByteArrayToFile(key.priv, KYBER_SECRETKEYBYTES, "kyber_private_key.txt");
+		writeByteArrayToFile(key.priv, KYBER_SECRETKEYBYTES, "kyber_private_key.txt");
 	}
 	
-	------------------------------ */
 	
 	// Assigning values to KyberKey Objects
-	//readByteArrayFromFile(key.priv, KYBER_SECRETKEYBYTES, "kyber_private_key.txt");
+	readByteArrayFromFile(key.priv, KYBER_SECRETKEYBYTES, "kyber_private_key.txt");
 	// printByteArray(key.priv, KYBER_SECRETKEYBYTES, "Secret Key");
 	readByteArrayFromFile(key.pub, KYBER_PUBLICKEYBYTES, "kyber_public_key.txt");
 	// printByteArray(key.pub, KYBER_PUBLICKEYBYTES, "Public Key");
 	
 	
+	/* ------------------------------
 	// Encrypting kyber ----
 	if(ret==0)
 	{
@@ -147,17 +147,19 @@ int main()
 		writeByteArrayToFile(key.pub, KYBER_SSBYTES, "kyber_shared_secret.txt");
 		writeByteArrayToFile(key.ct, KYBER_CIPHERTEXTBYTES, "kyber_cipher_text.txt");
 	}
+	------------------------------ */
+	
 	
 	// ----------------------------------------------
 	// ASSIGN THE CIPHER TEXT HARIKA GONNA SEND TO ME
 	// ----------------------------------------------
 	
-	// readByteArrayFromFile(key.ct, KYBER_CIPHERTEXTBYTES, "updated_cipher_text.txt");
+	// readByteArrayFromFile(key.ct, KYBER_CIPHERTEXTBYTES, "kyber_updated_cipher_text.txt");
 	// printByteArray(key.ct, KYBER_CIPHERTEXTBYTES, "Cipher Text");
 	
 	
-	/*
 	
+	/*
 	// Decrypting kyber ----
 	if(ret==0)
 	{
@@ -181,8 +183,8 @@ int main()
 		// writeByteArrayToFile(key.priv, KYBER_CIPHERTEXTBYTES, "kyber_cipher_text.txt");
 	}
 	
-	*/
 	
+	*/
 	// wc_FreeKyberKey(&key);
 	
 	
