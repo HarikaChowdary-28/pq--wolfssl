@@ -163,14 +163,28 @@ int main(int argc, char** argv) {
     // Process the first set of files
     clock_t start, end;
     double cpu_time_used;
-    start = clock();
-    ret = process_signature("servercert.pem", "serverkey.pem", "hmac-encrypted.txt", "upd-sign.txt");
+    
+    double cksum = 0;
+    for(int rep=0; rep<10; rep++)
+    {
+    	
+    	start = clock();
+    	ret = process_signature("servercert.pem", "serverkey.pem", "hmac-encrypted.txt", "upd-sign.txt");
+    	end = clock();
+    	
+    	cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+		
+		printf("Time taken for pqc-sig-gen: %f seconds\n", cpu_time_used);
+		
+		cksum+=cpu_time_used;
+		
+		
+    
+    }
+    printf("avg Time taken for pqc-sig-gen: %f seconds\n", cksum/10);
     
     if (ret != 0) return ret;
-    end = clock();
-    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-
-    printf("Time taken for signature generation: %f seconds\n", cpu_time_used);
+    
     
     //
 }

@@ -28,6 +28,7 @@
 /*
  * Makes a cryptographically secure key by stretching a user entered key
  */
+ 
 int GenerateKey(WC_RNG* rng, byte* key, int size, byte* salt, int pad)
 {
     int ret;
@@ -112,6 +113,7 @@ int AesEncrypt(Aes* aes, byte* key, int size, FILE* inFile, FILE* outFile)
     ret = wc_AesSetKey(aes, key, size, iv, AES_ENCRYPTION);
     if (ret != 0)
         return -1001;
+
 
     /* encrypts the message to the output based on input length + padding */
     ret = wc_AesCbcEncrypt(aes, output, input, length);
@@ -350,18 +352,31 @@ int main(int argc, char** argv)
     else if (ret == 0 && choice != 'n' && inFile != NULL) {
         key = malloc(size);    /* sets size memory of key */
         ret = NoEcho((char*)key, size);
+        
+        
         if (choice == 'e')
-            AesEncrypt(&aes, key, size, inFile, outFile);
+        	AesEncrypt(&aes, key, size, inFile, outFile);
         else if (choice == 'd')
-            AesDecrypt(&aes, key, size, inFile, outFile);
-    }
-    else if (choice == 'n') {
+        {
+        	clock_t start, end;
+		double cpu_time_used;
+		
+		start = clock();
+            	AesDecrypt(&aes, key, size, inFile, outFile);
+           	end = clock();
+        	cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+		
+		printf("Time taken for AES-Encryption: %f seconds\n", cpu_time_used);
+    	}
+    else if (choice == 'n') 
+    {
         printf("Must select either -e[128, 192, 256] or -d[128, 192, 256] \
                 for encryption and decryption\n");
         ret = -110;
     }
 
     return ret;
+}
 }
 
 #else
