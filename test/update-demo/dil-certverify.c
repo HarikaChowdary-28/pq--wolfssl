@@ -78,7 +78,7 @@ size_t read_buffer_from_file(const char* filename, uint8_t* buffer, size_t max_l
 
 
 //to verify the signatures generated at root, ica and leaf level in a cerificate chain
-int process_verification(const char* cert_file, const char* key_file, const char* msg_file, const char* sig_file)
+int process_verification(const char* cert_file, const char* key_file, const char* sig_file)
 {
     
     int ret = 0;
@@ -106,6 +106,7 @@ int process_verification(const char* cert_file, const char* key_file, const char
     DilithiumKey pub_key;
     DecodedCert decodedCert;
     word32 idx;
+    WOLFSSL_X509* cert;
 
     byte file_msg[BUFFER_SZ];
     size_t file_msg_len = 0;
@@ -174,6 +175,12 @@ int process_verification(const char* cert_file, const char* key_file, const char
             ret = -1;
         }
     }
+    if(ret==0){
+      /* convert cert from DER to internal WOLFSSL_X509 struct */
+    cert = wolfSSL_X509_d2i(&cert, cert_der_buf, cert_der_len);
+    if (cert == NULL)
+        check_ret("Failed to convert DER to WOLFSSL_X509",cert);
+        }
  
     if (ret == 0) {
        //to initialize the decoded certficate which converted to der format
@@ -196,6 +203,22 @@ int process_verification(const char* cert_file, const char* key_file, const char
         ret = wc_ImportDilithiumPublic(pub_der_buf, pub_der_len , &pub_key);
         check_ret("wc_dil_import_public", ret);
     }
+    
+     // Extract the signature
+     if (ret == 0) {
+        ret = wolfSSL_X509_get_signature(cert, signature, &signature_len);
+        if (ret != SSL_SUCCESS) {
+            fprintf(stderr, "Failed to extract signature from certificate.\n");
+            return ret;
+        }
+        }
+        
+        // Print the signature
+        printf("Signature:\n");
+        for (int i = 0; i < signature_len; i++) {
+            printf("%02x", signature[i]);
+        }
+        printf("\n");
 
     //to read the signature from the given input file and use the public key extracted from certificate and verify the signature using the public key
     if (ret == 0) {
@@ -208,15 +231,15 @@ int process_verification(const char* cert_file, const char* key_file, const char
        long long unsigned int* outlen;
         // Write signature to file
        
-        read_buffer_from_file(sig_file, signature, sizeof(msg)+DILITHIUM_SIG_SIZE);
+        //read_buffer_from_file(sig_file, signature, sizeof(msg)+DILITHIUM_SIG_SIZE);
 
-        size_t signature_len = read_buffer_from_file(sig_file , signature, sizeof(msg)+DILITHIUM_SIG_SIZE);
+        //size_t signature_len = read_buffer_from_file(sig_file , signature, sizeof(msg)+DILITHIUM_SIG_SIZE);
         if (signature_len == 0) {
         fprintf(stderr, "Failed to read signature from file.\n");
         return -1; // Handle the error as needed
         }
-        ret = wc_DilithiumVerify(msg, &outlen, signature, signature_len, &pub_key);
-       check_ret("wc_dil_verify", ret);
+       // ret = wc_DilithiumVerify(msg, &outlen, signature, signature_len, &pub_key);
+       //check_ret("wc_dil_verify", ret);
        
     }
 
@@ -226,6 +249,7 @@ int process_verification(const char* cert_file, const char* key_file, const char
      wc_FreeDilithiumKey(&pub_key);
      wc_FreeRng(&rng);
     //wolfCrypt_Cleanup();
+    wolfSSL_X509_free(cert);
 
     return ret;
 
@@ -233,61 +257,18 @@ int process_verification(const char* cert_file, const char* key_file, const char
 }
 int main(int argc, char** argv) {
    
-    int ret;
+   int ret;
+   // Process the first set of files
     clock_t start, end;
-    double cpu_time_used_ms;
+    double cpu_time_used;
+    start = clock();
+    ret = process_verification("servercert.pem", "serverkey.pem", "signature.txt");
     
-    clock_t start_total, end_total;
-    double total_time_used_ms = 0.0;
-    int num_iterations = 1000;
-    
-    // Open CSV file for writing
-    FILE *csv_file = fopen("dil3_sig_ver.csv", "w");
-    if (csv_file == NULL) {
-        printf("Failed to open CSV file for writing.\n");
-        return -1;
-    }
-    
-    // Write header to CSV file
-    fprintf(csv_file,"%s" ,"sig_ver[ms]\n");
-    
-    start_total = clock();
-    for (int i = 1; i <= 1000; ++i) {
-        char server_cert_path[BUFFER_SZ];
-        char server_key_path[BUFFER_SZ];
-        char msg_path[BUFFER_SZ];
-        char signature_path[BUFFER_SZ];
-
-     // Construct file paths for each iteration
-        sprintf(server_cert_path, "dilithium3/it%d/certs/servercert.pem", i);
-        sprintf(server_key_path, "dilithium3/it%d/certs/serverkey.pem", i);
-        sprintf(msg_path, "msgs/msg_%d.txt", i);
-        sprintf(signature_path, "signatures/sign_%d.txt", i);
-        
-        // Process the files
-        start = clock();
-        
-    // Process the first set of files
-    ret = process_verification(server_cert_path, server_key_path, msg_path, signature_path);
+    if (ret != 0) return ret;
     end = clock();
-            
-        cpu_time_used_ms = ((double) (end - start)) * 1000.0 / CLOCKS_PER_SEC;
-        // Write to CSV file
-             fprintf(csv_file, "%f\n", cpu_time_used_ms);
-        if (ret != 0) {
-            printf("Error processing files for iteration %d\n", i);
-            return ret;
-        }
-        //printf("Time taken for signature generation for iteration %d: %f seconds\n", i, cpu_time_used);
-    }
-    end_total = clock(); 
-    
-    total_time_used_ms = ((double) (end_total - start_total)) * 1000.0 / CLOCKS_PER_SEC;
-     double avg_time_per_iteration_ms = total_time_used_ms / num_iterations;
+    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
 
-    printf("Total time for 1000 iterations: %f milliseconds\n", total_time_used_ms);
-    printf("Average time per iteration: %.2f milliseconds\n", avg_time_per_iteration_ms);
-    
+    printf("Time taken for signature generation: %f seconds\n", cpu_time_used);
     return 0;
 
 }
