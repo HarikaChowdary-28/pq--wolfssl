@@ -18,12 +18,19 @@
 #include <wolfssl/wolfcrypt/error-crypt.h>
 #include <stdio.h>
 
+void print_hex(const byte *data, int len, FILE *fp) {
+    for (int i = 0; i < len; i++) {
+        fprintf(fp, "%02x", data[i]);
+    }
+}
+
 int main() {
     int ret = 0;
      WC_RNG     rng;
      byte hmacKey[32];  // HMAC-SHA-256 key is 32 bytes long
+     char filename[256];
 
-    /* Initialize wolfCrypt and the random number generator */
+    for (int key_num = 1; key_num <= 1000; key_num++) {
     if (wolfCrypt_Init() != 0) {
         //printf("wolfCrypt_Init failed\n");
         return -1;
@@ -34,19 +41,22 @@ int main() {
         return -1;
     }
 
-    /* Generate a random HMAC key */
     if (wc_RNG_GenerateBlock(&rng, hmacKey, sizeof(hmacKey)) != 0) {
         //printf("wc_RNG_GenerateBlock failed\n");
         ret = -1;
-    } else {
-        //printf("Generated HMAC-SHA-256 Key: ");
-        for (int i = 0; i < sizeof(hmacKey); i++) {
-            printf("%02x", hmacKey[i]);
+    } 
+     // Save key to file in hexadecimal format
+        snprintf(filename, sizeof(filename), "hmac_keys/hmac_key_%d.txt", key_num);
+        FILE *fp = fopen(filename, "w");
+        if (fp == NULL) {
+            printf("Failed to open file for writing: %s\n", filename);
+            return -1;
         }
-        printf("\n");
+        print_hex(hmacKey, sizeof(hmacKey), fp);
+        fclose(fp);
+    
     }
 
-    /* Clean up resources */
     wc_FreeRng(&rng);
     wolfCrypt_Cleanup();
 

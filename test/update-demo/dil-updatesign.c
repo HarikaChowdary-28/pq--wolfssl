@@ -13,11 +13,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-//enable ECC
-#if defined(HAVE_ECC)
-    #include <wolfssl/wolfcrypt/ecc.h>
-#endif
-
 #ifndef WOLFSSL_DEBUG_TLS
     #define WOLFSSL_DEBUG_TLS   /* enable full debugging */
 #endif
@@ -123,19 +118,23 @@ int process_signature(const char* cert_file, const char* key_file, const char* m
         check_ret("wc_dilPrivateKeyDecode", ret);
     }
 
-    // Load and sign the message 
-    if (ret == 0) {
-        FILE* msg_file_fp = fopen(msg_file, "rb");
-        if (msg_file_fp) {
-            file_msg_len = fread(file_msg, 1, BUFFER_SZ, msg_file_fp);
-            fclose(msg_file_fp);
-            ret = file_msg_len > 0 ? 0 : -1;
-            check_ret("fread message", ret);
+   // Load and sign the message
+if (ret == 0) {
+    FILE* msg_file_fp = fopen(msg_file, "rb");
+    if (msg_file_fp) {
+        file_msg_len = fread(file_msg, 1, BUFFER_SZ, msg_file_fp);
+        fclose(msg_file_fp);
+        if (file_msg_len > 0) {
+            ret = 0;
         } else {
             ret = -1;
-            check_ret("fopen message", ret);
+            perror("Error reading message:");
         }
+    } else {
+        ret = -1;
+        perror("Error opening message file:");
     }
+}
 
     if (ret == 0) {
         //wrapper function to generate a signature by taking msg, msg length , priv key which we decoded from der format and rng. Writes the output buffer (signed message) to signature variable.
@@ -159,19 +158,61 @@ int process_signature(const char* cert_file, const char* key_file, const char* m
 
 int main(int argc, char** argv) {
     int ret;
-
-    // Process the first set of files
+    
     clock_t start, end;
-    double cpu_time_used;
-    start = clock();
-    ret = process_signature("servercert.pem", "serverkey.pem", "hmac-encrypted.txt", "upd-sign.txt");
+    double cpu_time_used_ms;
     
-    if (ret != 0) return ret;
-    end = clock();
-    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+    clock_t start_total, end_total;
+    double total_time_used_ms = 0.0;
+    int num_iterations = 1000;
+    
+    // Open CSV file for writing
+    FILE *csv_file = fopen("dil3_sig_gen.csv", "w");
+    if (csv_file == NULL) {
+        printf("Failed to open CSV file for writing.\n");
+        return -1;
+    }
+    
+    // Write header to CSV file
+    fprintf(csv_file,"%s" ,"sig_gen[ms]\n");
+    
+     start_total = clock();
+    for (int i = 1; i <= 1000;++i) {
+        char server_cert_path[BUFFER_SZ];
+        char server_key_path[BUFFER_SZ];
+        char msg_path[BUFFER_SZ];
+        char signature_path[BUFFER_SZ];
 
-    printf("Time taken for signature generation: %f seconds\n", cpu_time_used);
+        // Construct file paths for each iteration
+        sprintf(server_cert_path, "dilithium3/it%d/certs/servercert.pem", i);
+        sprintf(server_key_path, "dilithium3/it%d/certs/serverkey.pem", i);
+        sprintf(msg_path, "msgs/msg_%d.txt", i);
+        sprintf(signature_path, "signatures/sign_%d.txt", i);
+
+        // Process the files
+        start = clock();
+        ret = process_signature(server_cert_path, server_key_path, msg_path, signature_path);
+        
+        end = clock();
+            
+        cpu_time_used_ms = ((double) (end - start)) * 1000.0 / CLOCKS_PER_SEC;
+        // Write to CSV file
+             fprintf(csv_file, "%f\n", cpu_time_used_ms);
+        if (ret != 0) {
+            printf("Error processing files for iteration %d\n", i);
+            return ret;
+        }
+        //printf("Time taken for signature generation for iteration %d: %f seconds\n", i, cpu_time_used);
+    }
+    end_total = clock(); 
     
+    total_time_used_ms = ((double) (end_total - start_total)) * 1000.0 / CLOCKS_PER_SEC;
+     double avg_time_per_iteration_ms = total_time_used_ms / num_iterations;
+
+    printf("Total time for 1000 iterations: %f milliseconds\n", total_time_used_ms);
+    printf("Average time per iteration: %.2f milliseconds\n", avg_time_per_iteration_ms);
+    
+    return 0;
     //
 }
 #endif

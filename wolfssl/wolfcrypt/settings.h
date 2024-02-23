@@ -73,7 +73,7 @@
 #endif
 
 #ifdef HAVE_ECC
-    #define ECC_MODE       1  /* available modes 1, 3 */
+    #define ECC_MODE       1 /* available modes 1, 3 */
     /* Set curves */
     #if ECC_MODE == 1
         #define ECC_CURVE_SZ 32 /* SECP256R1 curve size in bytes */
