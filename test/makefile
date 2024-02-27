@@ -3,7 +3,7 @@ CFLAGS=-I$(WOLF_INSTALL_DIR)/include -Wall
 LIBS=-L$(WOLF_INSTALL_DIR)/lib -lwolfssl
 
 
-all:dilithium/dil-combinedsign dilithium/dil-combinedverify falcon/fal-combinedsign falcon/fal-combinedverify sphincs/sp-combinedsign sphincs/sp-combinedverify xmss/xmss-combinedsign xmss/xmss-combinedverify xmss-dil/xmss-dil-combinedsign xmss-dil/xmss-dil-combinedverify xmss-fal/xmss-fal-combinedsign xmss-fal/xmss-fal-combinedverify xmss-sphincs/xmss-sp-combinedsign xmss-sphincs/xmss-sp-combinedverify update-demo/hmac-generate update-demo/aes-file-encrypt update-demo/hmacex_file update-demo/dil-updatesign update-demo/dil-updateverify dil-fal/dil-fal-combinedsign dil-fal/dil-fal-combinedverify update-demo/aes-encrypt update-demo/aes-decrypt update-demo/kymain-gen update-demo/kymain-encrypt update-demo/kymain-decrypt update-demo/fal-updatesign update-demo/fal-updatever update-demo/sp-updatesign update-demo/sp-updatever update-demo/xmss-updatesign update-demo/xmss-updatever
+all:dilithium/dil-combinedsign dilithium/dil-combinedverify falcon/fal-combinedsign falcon/fal-combinedverify sphincs/sp-combinedsign sphincs/sp-combinedverify xmss/xmss-combinedsign xmss/xmss-combinedverify xmss-dil/xmss-dil-combinedsign xmss-dil/xmss-dil-combinedverify xmss-fal/xmss-fal-combinedsign xmss-fal/xmss-fal-combinedverify xmss-sphincs/xmss-sp-combinedsign xmss-sphincs/xmss-sp-combinedverify update-demo/hmac-generate update-demo/aes-file-encrypt update-demo/hmacex_file update-demo/dil-updatesign update-demo/dil-updateverify dil-fal/dil-fal-combinedsign dil-fal/dil-fal-combinedverify update-demo/aes-encrypt update-demo/aes-decrypt update-demo/kymain-gen update-demo/kymain-encrypt update-demo/kymain-decrypt update-demo/fal-updatesign update-demo/fal-updatever update-demo/sp-updatesign update-demo/sp-updatever update-demo/xmss-updatesign update-demo/xmss-updatever update-demo/certverify
 
 dilithium/dil-combinedsign:dilithium/dil-combinedsign.o 
 	$(CC) -o $@ $^ $(CFLAGS) -O3 $(CPPFLAGS) $(LIBS)
@@ -102,7 +102,11 @@ update-demo/xmss-updatever: update-demo/xmss-updatever.o
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS) 
 	
 
+update-demo/certverify: update-demo/certverify.o
+	$(CC) -o $@ $^ $(CFLAGS) $(LIBS) 
+	
+
 .PHONY: clean all
 
 clean:
-	rm -f *.o dilithium/dil-combinedsign dilithium/dil-combinedverify falcon/fal-combinedsign falcon/fal-combinedverify sphincs/sp-combinedsign sphincs/sp-combinedverify xmss/xmss-combinedsign xmss/xmss-combinedverify xmss-dil/xmss-dil-combinedsign xmss-dil/xmss-dil-combinedverify xmss-fal/xmss-fal-combinedsign xmss-fal/xmss-fal-combinedverify xmss-sphincs/xmss-sp-combinedsign xmss-sphincs/xmss-sp-combinedverify update-demo/hmac-generate update-demo/aes-file-encrypt update-demo/hmacex_file update-demo/dil-updatesign update-demo/dil-updateverify dil-fal/dil-fal-combinedsign dil-fal/dil-fal-combinedverify update-demo/aes-encrypt update-demo/aes-decrypt update-demo/kymain-gen update-demo/kymain-encrypt update-demo/kymain-decrypt update-demo/fal-updatesign update-demo/fal-updatever update-demo/sp-updatesign update-demo/sp-updatever update-demo/xmss-updatesign update-demo/xmss-updatever
+	rm -f *.o dilithium/dil-combinedsign dilithium/dil-combinedverify falcon/fal-combinedsign falcon/fal-combinedverify sphincs/sp-combinedsign sphincs/sp-combinedverify xmss/xmss-combinedsign xmss/xmss-combinedverify xmss-dil/xmss-dil-combinedsign xmss-dil/xmss-dil-combinedverify xmss-fal/xmss-fal-combinedsign xmss-fal/xmss-fal-combinedverify xmss-sphincs/xmss-sp-combinedsign xmss-sphincs/xmss-sp-combinedverify update-demo/hmac-generate update-demo/aes-file-encrypt update-demo/hmacex_file update-demo/dil-updatesign update-demo/dil-updateverify dil-fal/dil-fal-combinedsign dil-fal/dil-fal-combinedverify update-demo/aes-encrypt update-demo/aes-decrypt update-demo/kymain-gen update-demo/kymain-encrypt update-demo/kymain-decrypt update-demo/fal-updatesign update-demo/fal-updatever update-demo/sp-updatesign update-demo/sp-updatever update-demo/xmss-updatesign update-demo/xmss-updatever update-demo/certverify

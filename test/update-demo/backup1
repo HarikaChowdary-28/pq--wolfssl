@@ -573,3 +573,250 @@ int main(int argc, char** argv) {
 }
 #endif
 
+
+-------------
+certverify
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#ifdef HAVE_CONFIG_H
+    #include <config.h>
+#endif
+/* wolfSSL */
+#include <wolfssl/options.h>
+#include <wolfssl/wolfcrypt/settings.h>
+#include <wolfssl/wolfcrypt/asn_public.h>
+#include <wolfssl/wolfcrypt/asn.h>
+#include <wolfssl/wolfcrypt/error-crypt.h>
+#include <wolfssl/ssl.h>
+#include <wolfssl/test.h>
+#include <time.h>
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#define BUFFER_SZ 60000
+
+#ifndef WOLFSSL_DEBUG_TLS
+    #define WOLFSSL_DEBUG_TLS  
+#endif
+#ifndef DEBUG_WOLFSSL
+    #define DEBUG_WOLFSSL
+#endif
+#ifndef WOLFSSL_CERT_EXT
+    #define WOLFSSL_CERT_EXT
+#endif
+
+#if defined(HAVE_SPHINCS)
+    #include <wolfssl/wolfcrypt/sphincs.h>
+#endif
+#if defined(HAVE_XMSS)
+    #include <wolfssl/wolfcrypt/xmss.h>
+#endif
+#if defined(HAVE_FALCON)
+    #include <wolfssl/wolfcrypt/falcon.h>
+#endif
+#if defined(HAVE_DILITHIUM)
+    #include <wolfssl/wolfcrypt/dilithium.h>
+#endif
+#if defined(HAVE_ECC)
+    #include <wolfssl/wolfcrypt/ecc.h>
+#endif
+
+int main()
+{
+    WOLFSSL_X509 *icaCert;
+    WOLFSSL_X509 *serverCert;
+    WOLFSSL_X509_STORE *store;
+    WOLFSSL_X509_STORE_CTX *ctx;
+    int verifyResult;
+
+    if (wolfSSL_Init() != SSL_SUCCESS) {
+        printf("Error initializing WolfSSL\n");
+        return -1;
+    }
+
+    
+    store = wolfSSL_X509_STORE_new();
+    if (store == NULL) {
+        printf("Error creating X509 store\n");
+        return -1;
+    }
+
+    if (wolfSSL_X509_STORE_load_locations(store, "rootcert.pem", NULL) != SSL_SUCCESS) {
+        printf("Error loading root CA certificate\n");
+        wolfSSL_X509_STORE_free(store);
+        return -1;
+    }
+    icaCert = wolfSSL_X509_load_certificate_file("icacert.pem", SSL_FILETYPE_PEM);
+    if (icaCert == NULL) {
+        printf("Error loading intermediate CA certificate\n");
+        wolfSSL_X509_STORE_free(store);
+        return -1;
+    }
+
+    serverCert = wolfSSL_X509_load_certificate_file("servercert.pem", SSL_FILETYPE_PEM);
+    if (serverCert == NULL) {
+        printf("Error loading server certificate\n");
+        wolfSSL_X509_STORE_free(store);
+        wolfSSL_X509_free(icaCert);
+        return -1;
+    }
+
+    ctx = wolfSSL_X509_STORE_CTX_new();
+    if (ctx == NULL) {
+        printf("Error creating X509 store context\n");
+        wolfSSL_X509_STORE_free(store);
+        wolfSSL_X509_free(icaCert);
+        wolfSSL_X509_free(serverCert);
+        return -1;
+    }
+    if (wolfSSL_X509_STORE_add_cert(store, icaCert) != SSL_SUCCESS) {
+        printf("Error adding intermediate CA certificate to store\n");
+        wolfSSL_X509_STORE_CTX_free(ctx);
+        wolfSSL_X509_STORE_free(store);
+        wolfSSL_X509_free(icaCert);
+        wolfSSL_X509_free(serverCert);
+        return -1;
+    }
+
+    if (wolfSSL_X509_STORE_CTX_init(ctx, store, serverCert, NULL) != SSL_SUCCESS) {
+        printf("Error initializing X509 store context\n");
+        wolfSSL_X509_STORE_CTX_free(ctx);
+        wolfSSL_X509_STORE_free(store);
+        wolfSSL_X509_free(icaCert);
+        wolfSSL_X509_free(serverCert);
+        return -1;
+    }
+
+    verifyResult = wolfSSL_X509_verify_cert(ctx);
+    if (verifyResult != SSL_SUCCESS) {
+        printf("Certificate chain verification failed: %d\n", verifyResult);
+    } else {
+        printf("Certificate chain verification succeeded\n");
+    }
+    
+    wolfSSL_X509_STORE_CTX_free(ctx);
+    wolfSSL_X509_STORE_free(store);
+    wolfSSL_X509_free(icaCert);
+    wolfSSL_X509_free(serverCert);
+    wolfSSL_Cleanup();
+
+    return 0;
+}
+
+---------
+certverify-standalone
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#ifdef HAVE_CONFIG_H
+    #include <config.h>
+#endif
+/* wolfSSL */
+#include <wolfssl/options.h>
+#include <wolfssl/wolfcrypt/settings.h>
+#include <wolfssl/wolfcrypt/asn_public.h>
+#include <wolfssl/wolfcrypt/asn.h>
+#include <wolfssl/wolfcrypt/error-crypt.h>
+#include <wolfssl/ssl.h>
+#include <wolfssl/test.h>
+#include <time.h>
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#define BUFFER_SZ 60000
+
+#ifndef WOLFSSL_DEBUG_TLS
+    #define WOLFSSL_DEBUG_TLS   /* enable full debugging */
+#endif
+#ifndef DEBUG_WOLFSSL
+    #define DEBUG_WOLFSSL
+#endif
+#ifndef WOLFSSL_CERT_EXT
+    #define WOLFSSL_CERT_EXT
+#endif
+
+//enable dilithium
+#if defined(HAVE_DILITHIUM)
+#include <stdint.h>
+#include <wolfssl/wolfcrypt/hash.h>
+#include <wolfssl/wolfcrypt/dilithium.h>
+#include <wolfssl/wolfcrypt/dilithium_packing.h>
+#include <wolfssl/wolfcrypt/dilithium_polynoms.h>
+#include <wolfssl/wolfcrypt/dilithium_symmetric.h>
+
+int main()
+{
+    WOLFSSL_X509 *cert;
+    WOLFSSL_X509_STORE *store;
+    WOLFSSL_X509_STORE_CTX *ctx;
+    int verifyResult;
+    
+    // Initialize WolfSSL
+    if (wolfSSL_Init() != SSL_SUCCESS) {
+        printf("Error initializing WolfSSL\n");
+        return -1;
+    }
+    
+    // Load the CA certificate (or trusted root certificate)
+    store = wolfSSL_X509_STORE_new();
+    if (store == NULL) {
+        printf("Error creating X509 store\n");
+        return -1;
+    }
+    
+    if (wolfSSL_X509_STORE_load_locations(store, "rootcert.pem", NULL) != SSL_SUCCESS) {
+        printf("Error loading CA certificate\n");
+        wolfSSL_X509_STORE_free(store);
+        return -1;
+    }
+    
+    // Load the certificate to be verified
+    cert = wolfSSL_X509_load_certificate_file("icacert.pem", SSL_FILETYPE_PEM);
+    if (cert == NULL) {
+        printf("Error loading certificate\n");
+        wolfSSL_X509_STORE_free(store);
+        return -1;
+    }
+
+    // Initialize the X509 store context
+    ctx = wolfSSL_X509_STORE_CTX_new();
+    if (ctx == NULL) {
+        printf("Error creating X509 store context\n");
+        wolfSSL_X509_free(cert);
+        wolfSSL_X509_STORE_free(store);
+        return -1;
+    }
+    
+    // Initialize the context with store and certificate
+    if (wolfSSL_X509_STORE_CTX_init(ctx, store, cert, NULL) != SSL_SUCCESS) {
+        printf("Error initializing X509 store context\n");
+        wolfSSL_X509_free(cert);
+        wolfSSL_X509_STORE_free(store);
+        wolfSSL_X509_STORE_CTX_free(ctx);
+        return -1;
+    }
+    
+    // Verify the certificate
+    verifyResult = wolfSSL_X509_verify_cert(ctx);
+    if (verifyResult != SSL_SUCCESS) {
+        printf("Certificate verification failed: %d\n", verifyResult);
+    } else {
+        printf("Certificate verification succeeded\n");
+    }
+    
+    // Clean up resources
+    wolfSSL_X509_STORE_CTX_free(ctx);
+    wolfSSL_X509_free(cert);
+    wolfSSL_X509_STORE_free(store);
+    
+    // Clean up WolfSSL
+    wolfSSL_Cleanup();
+    
+    return 0;
+}
+#endif
+
+
