@@ -13,10 +13,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-//enable ECC
-#if defined(HAVE_ECC)
-    #include <wolfssl/wolfcrypt/ecc.h>
-#endif
 
 #ifndef WOLFSSL_DEBUG_TLS
     #define WOLFSSL_DEBUG_TLS   /* enable full debugging */
@@ -262,7 +258,7 @@ int process_signature1(const char* cert_file, const char* key_file, const char* 
 }
 
 int main(int argc, char** argv) {
-     int ret;
+    /* int ret;
 
     // Process the first set of files
     clock_t start, end;
@@ -284,7 +280,83 @@ int main(int argc, char** argv) {
     printf("Time taken for signature generation: %f seconds\n", cpu_time_used);
     
 
-    //
+    */
+    
+    int ret;
+    clock_t start, end;
+    double cpu_time_used_ms;
+    
+    clock_t start_total, end_total;
+    double total_time_used_ms = 0.0;
+    int num_iterations = 100;
+    
+    // Open CSV file for writing
+    FILE *csv_file = fopen("xmss5-fal5_secboot.csv", "w");
+    if (csv_file == NULL) {
+        printf("Failed to open CSV file for writing.\n");
+        return -1;
+    }
+    
+    // Write headers to CSV file
+    fprintf(csv_file, "rootsign[ms],icasign[ms],serversign[ms]\n");
+    
+    start_total = clock();
+    for (int i = 1; i <= num_iterations; ++i) {
+        char root_cert_path[BUFFER_SZ];
+        char root_key_path[BUFFER_SZ];
+        char ica_cert_path[BUFFER_SZ];
+        char ica_key_path[BUFFER_SZ];
+        char server_cert_path[BUFFER_SZ];
+        char server_key_path[BUFFER_SZ];
+        char msg_path[BUFFER_SZ];
+        char root_sign[BUFFER_SZ];
+        char ica_sign[BUFFER_SZ];
+        char server_sign[BUFFER_SZ];
+
+        // Construct file paths for each iteration
+        sprintf(root_cert_path, "xmss5-fal5/it%d/certs/rootcert.pem", i);
+        sprintf(root_key_path, "xmss5-fal5/it%d/certs/rootkey.pem", i);
+        sprintf(ica_cert_path, "xmss5-fal5/it%d/certs/icacert.pem", i);
+        sprintf(ica_key_path, "xmss5-fal5/it%d/certs/icakey.pem", i);
+        sprintf(server_cert_path, "xmss5-fal5/it%d/certs/servercert.pem", i);
+        sprintf(server_key_path, "xmss5-fal5/it%d/certs/serverkey.pem", i);
+        sprintf(root_sign, "xmss5_fal5_signs/root/sign_%d.txt", i);
+        sprintf(ica_sign, "xmss5_fal5_signs/ica/sign_%d.txt", i);
+        sprintf(server_sign, "xmss5_fal5_signs/server/sign_%d.txt", i);
+
+        start = clock();
+        ret = process_signature(root_cert_path, root_key_path, "f0.zip", root_sign);
+        if (ret != 0) return ret;
+        end = clock();
+        cpu_time_used_ms = (((double) (end - start)) / CLOCKS_PER_SEC)* 1000.0;
+        fprintf(csv_file, "%f,", cpu_time_used_ms);
+
+        // Process and record icasign time
+        start = clock();
+        ret = process_signature1(ica_cert_path, ica_key_path, "f1.img.xz", ica_sign);
+        if (ret != 0) return ret;
+        end = clock();
+        cpu_time_used_ms = (((double) (end - start)) / CLOCKS_PER_SEC)* 1000.0;
+        fprintf(csv_file, "%f,", cpu_time_used_ms);
+
+        // Process and record serversign time
+        start = clock();
+        ret = process_signature1(server_cert_path, server_key_path, "f2.zip", server_sign);
+        if (ret != 0) return ret;
+        end = clock();
+        cpu_time_used_ms = (((double) (end - start)) / CLOCKS_PER_SEC)* 1000.0;
+        fprintf(csv_file, "%f\n", cpu_time_used_ms);
+    }
+    end_total = clock(); 
+    
+    total_time_used_ms = (((double) (end_total - start_total)) / CLOCKS_PER_SEC)* 1000.0;
+
+    printf("Total time for 1000 iterations: %f milliseconds\n", total_time_used_ms);
+    
+    fclose(csv_file);
+    return 0;
+
+
 }
 #endif
 #endif
