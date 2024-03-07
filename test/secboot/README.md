@@ -99,15 +99,22 @@ _Note:You can the “iter” to however many iterations you want.The output resu
 
 
 ## Secure Boot Demo
-Overview:
+### Overview
 1.In secure boot demo, we generate a certificate chain, and we sign different files at different stages (there can be n number of stages). 
+
 2.We considered 3 stages, where at 0th stage we signed bootloader image(message) with rootkey.pem(privatekey) and extracted the public key associated with privatekey from the certificate and verified the signature. 
-3.At the 1st stage we signed an OS Image with icakey.pem and verified the signature with public key from icacert.pem 
+
+3.At the 1st stage we signed an OS Image with icakey.pem and verified the signature with public key from icacert.pem.
+
 4.At the 2nd stage we signed application files which are compatible with OS with serverkey.pem and verified the signature with public key from servercert.pem. 
-Implementation:
+
+### Implementation
 5.To generate these keys and certificates follow section 2 steps. 
+
 6.In pq—wolfssl/test/secboot folder we have different folders. 
+
 7.If you want to test the experiment by XMSS, then do the following steps. 
+
 8.In secboot run 
 ```bash
 make
@@ -117,12 +124,15 @@ make
 ./xmss_sign
 ```
 to generate signatures at different stages (for messages f0.zip at 0th  stage, f1.img.xz at 1st stage, f2.zip at 2nd stage for 1000 iterations) 
+
 10.For verification, In pq—wolfssl/test/secboot/xmss folder run 
 ```bash
 ./xmss_verify
 ```
 if you get message as VERIFY: SUCCESS, your signature is verified successfully. 
+
 11.This is the same process for using any scheme other than XMSS as well. 
+
 12.This is the same process for using mixed certificates (pq—wolfssl/test/secboot/mixed/xmss-fal  run, 
 ```bash
 ./xmss_fal_sign 
