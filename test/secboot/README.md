@@ -96,7 +96,7 @@ and run make again.
 ```
 _Note:You can the “iter” to however many iterations you want.The output results will be written to .csv files which have all the necessary calculations. 
 
-###Secure Boot Demo
+##Secure Boot Demo
 Overview:
 1.In secure boot demo, we generate a certificate chain, and we sign different files at different stages (there can be n number of stages). 
 2.We considered 3 stages, where at 0th stage we signed bootloader image(message) with rootkey.pem(privatekey) and extracted the public key associated with privatekey from the certificate and verified the signature. 
