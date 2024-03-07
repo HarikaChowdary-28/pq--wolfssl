@@ -71,7 +71,7 @@ sudo make && sudo make install
 ```
 8.For using different signature schemes please refer to the readme file in certgen/readme.md file.
 
-### Client- server connection (Secure TLS with pqc) --client-server
+## Client- server connection (Secure TLS with pqc) --client-server
 
 1.If you want a secure connection establishment between client and server with XMSS level-1 scheme and with KEM being KYBER level-1, dump the certificates (certs àfolder) generated in certgen/XMSS-1_XMSS-1_XMSS-1 folder to certgen/certs folder.
 2.If you want to use different level of kyber, make sure to do changes i.e. change the security level of kyber from 1 to 5 in pq-wolfssl/wolfssl/wolfcrypt/settings.h file, save the changes, run in pq-wolfssl
@@ -96,13 +96,13 @@ and run make again.
 ```
 _Note:You can the “iter” to however many iterations you want.The output results will be written to .csv files which have all the necessary calculations. 
 
-#Secure Boot Demo
-##Overview
+###Secure Boot Demo
+Overview:
 1.In secure boot demo, we generate a certificate chain, and we sign different files at different stages (there can be n number of stages). 
 2.We considered 3 stages, where at 0th stage we signed bootloader image(message) with rootkey.pem(privatekey) and extracted the public key associated with privatekey from the certificate and verified the signature. 
 3.At the 1st stage we signed an OS Image with icakey.pem and verified the signature with public key from icacert.pem 
 4.At the 2nd stage we signed application files which are compatible with OS with serverkey.pem and verified the signature with public key from servercert.pem. 
-###Implementation
+Implementation:
 5.To generate these keys and certificates follow section 2 steps. 
 6.In pq—wolfssl/test/secboot folder we have different folders. 
 7.If you want to test the experiment by XMSS, then do the following steps. 
