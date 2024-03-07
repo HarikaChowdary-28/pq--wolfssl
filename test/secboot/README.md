@@ -51,7 +51,9 @@ _Note:In case of any errors while running make command, remove -Werror (search f
 ## Certificate Generation --certgen
 
 1.To generate a certificate chain from pq-wolfssl  library, download certgen folder which is available in pqc teams channel. 
+
 2.If u want to generate a XMSS level 1 certficate chain where it have XMSS at root, ica and server with security level 1 according to NIST.
+
 3.Run 
 ```bash
 make
@@ -61,11 +63,13 @@ make
 make clean
 ```
 and run make again. 
+
 5.To generate the certificate chain, run this following command:
 ```bash
 ./certgen out=XMSS-1_XMSS-1_XMSS-1 root=XMSS 1 ica=XMSS 1 leaf=XMSS 1 
 ```
 6.Similarly if you want to generate a certificate chain of XMSS level-5 security, open settings.h file in pq-wolfSSL/wolfssl/wolfcrypt directory and change the mode of XMSS to 5 in line 71. 
+
 7.Run this command after step 7 in pq-wolfssl
 ```bash
 sudo make && sudo make install
@@ -75,6 +79,7 @@ sudo make && sudo make install
 ## Client- server connection (Secure TLS with pqc) --client-server
 
 1.If you want a secure connection establishment between client and server with XMSS level-1 scheme and with KEM being KYBER level-1, dump the certificates (certs àfolder) generated in certgen/XMSS-1_XMSS-1_XMSS-1 folder to certgen/certs folder.
+
 2.If you want to use different level of kyber, make sure to do changes i.e. change the security level of kyber from 1 to 5 in pq-wolfssl/wolfssl/wolfcrypt/settings.h file, save the changes, run in pq-wolfssl
 ```bash
 sudo make && sudo make install
