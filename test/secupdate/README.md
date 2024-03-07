@@ -1,6 +1,6 @@
 <div class="oranda-hide">
 
-# Secure Boot Demo
+# Secure Update Demo
 ## Overview
 1.In secure update demo, we first generate a kyber key pair(privatekey, publickey) which is used for secure key exchange mechanism. 
 
