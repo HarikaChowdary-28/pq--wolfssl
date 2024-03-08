@@ -1,6 +1,6 @@
 <div class="oranda-hide">
 
-# Getting Started - Installation
+# Getting Started::Installation
 
 </div>
 
@@ -26,7 +26,7 @@ sudo make && sudo make install
 ```bash
 autoreconf -I
 ```
-and retry from step 8 again. 
+and retry from step 1 again. 
 
 _Note:In case of any errors while running make command, remove -Werror (search for keyword) from Makefile.
 
