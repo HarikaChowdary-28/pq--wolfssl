@@ -152,10 +152,10 @@ int main(int argc, char** argv) {
     
     clock_t start_total, end_total;
     double total_time_used_ms = 0.0;
-    int num_iterations = 100;
+    int num_iterations = 1000;
     
     // Open CSV file for writing
-    FILE *csv_file = fopen("xmss5_secboot.csv", "w");
+    FILE *csv_file = fopen("xmss1_secboot.csv", "w");
     if (csv_file == NULL) {
         printf("Failed to open CSV file for writing.\n");
         return -1;
@@ -178,15 +178,15 @@ int main(int argc, char** argv) {
         char server_sign[BUFFER_SZ];
 
         // Construct file paths for each iteration
-        sprintf(root_cert_path, "xmss5/it%d/certs/rootcert.pem", i);
-        sprintf(root_key_path, "xmss5/it%d/certs/rootkey.pem", i);
-        sprintf(ica_cert_path, "xmss5/it%d/certs/icacert.pem", i);
-        sprintf(ica_key_path, "xmss5/it%d/certs/icakey.pem", i);
-        sprintf(server_cert_path, "xmss5/it%d/certs/servercert.pem", i);
-        sprintf(server_key_path, "xmss5/it%d/certs/serverkey.pem", i);
-        sprintf(root_sign, "xmss5_signs/root/sign_%d.txt", i);
-        sprintf(ica_sign, "xmss5_signs/ica/sign_%d.txt", i);
-        sprintf(server_sign, "xmss5_signs/server/sign_%d.txt", i);
+        sprintf(root_cert_path, "xmss1/it%d/certs/rootcert.pem", i);
+        sprintf(root_key_path, "xmss1/it%d/certs/rootkey.pem", i);
+        sprintf(ica_cert_path, "xmss1/it%d/certs/icacert.pem", i);
+        sprintf(ica_key_path, "xmss1/it%d/certs/icakey.pem", i);
+        sprintf(server_cert_path, "xmss1/it%d/certs/servercert.pem", i);
+        sprintf(server_key_path, "xmss1/it%d/certs/serverkey.pem", i);
+        sprintf(root_sign, "xmss1_signs/root/sign_%d.txt", i);
+        sprintf(ica_sign, "xmss1_signs/ica/sign_%d.txt", i);
+        sprintf(server_sign, "xmss1_signs/server/sign_%d.txt", i);
 
         start = clock();
         ret = process_signature(root_cert_path, root_key_path, "f0.zip", root_sign);

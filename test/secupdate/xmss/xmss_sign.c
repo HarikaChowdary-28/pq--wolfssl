@@ -183,7 +183,7 @@ int main(int argc, char** argv) {
         // Construct file paths for each iteration
         sprintf(server_cert_path, "xmss1/it%d/certs/servercert.pem", i);
         sprintf(server_key_path, "xmss1/it%d/certs/serverkey.pem", i);
-        sprintf(msg_path, "hmac/msgs/msg_%d.txt", i);
+        sprintf(msg_path, "msgs/msg_%d.txt", i);
         sprintf(signature_path, "signatures/sign_%d.txt", i);
 
         // Process the files
