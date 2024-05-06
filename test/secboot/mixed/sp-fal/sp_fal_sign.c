@@ -255,7 +255,7 @@ int main(int argc, char** argv) {
     int num_iterations = 100;
     
     // Open CSV file for writing
-    FILE *csv_file = fopen("sp1-fal1_secboot.csv", "w");
+    FILE *csv_file = fopen("too-replace.csv", "w");
     if (csv_file == NULL) {
         printf("Failed to open CSV file for writing.\n");
         return -1;
@@ -278,15 +278,15 @@ int main(int argc, char** argv) {
         char server_sign[BUFFER_SZ];
 
         // Construct file paths for each iteration
-        sprintf(root_cert_path, "sp1-fal1/it%d/certs/rootcert.pem", i);
-        sprintf(root_key_path, "sp1-fal1/it%d/certs/rootkey.pem", i);
-        sprintf(ica_cert_path, "sp1-fal1/it%d/certs/icacert.pem", i);
-        sprintf(ica_key_path, "sp1-fal1/it%d/certs/icakey.pem", i);
-        sprintf(server_cert_path, "sp1-fal1/it%d/certs/servercert.pem", i);
-        sprintf(server_key_path, "sp1-fal1/it%d/certs/serverkey.pem", i);
-        sprintf(root_sign, "sp1_fal1_signs/root/sign_%d.txt", i);
-        sprintf(ica_sign, "sp1_fal1_signs/ica/sign_%d.txt", i);
-        sprintf(server_sign, "sp1_fal1_signs/server/sign_%d.txt", i);
+        sprintf(root_cert_path, "to-replace/it%d/certs/rootcert.pem", i);
+        sprintf(root_key_path, "to-replace/it%d/certs/rootkey.pem", i);
+        sprintf(ica_cert_path, "to-replace/it%d/certs/icacert.pem", i);
+        sprintf(ica_key_path, "to-replace/it%d/certs/icakey.pem", i);
+        sprintf(server_cert_path, "to-replace/it%d/certs/servercert.pem", i);
+        sprintf(server_key_path, "to-replace/it%d/certs/serverkey.pem", i);
+        sprintf(root_sign, "tooo-replace/root/sign_%d.txt", i);
+        sprintf(ica_sign, "tooo-replace/ica/sign_%d.txt", i);
+        sprintf(server_sign, "tooo-replace/server/sign_%d.txt", i);
 
         start = clock();
         ret = process_signature(root_cert_path, root_key_path, "f0.zip", root_sign);

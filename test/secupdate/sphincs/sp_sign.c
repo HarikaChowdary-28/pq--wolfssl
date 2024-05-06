@@ -45,8 +45,8 @@
 
 //define the certificate size, key size
 #define BUFFER_SZ 100000    
-#define MAX_PEM_CERT_SIZE 60000
-#define MAX_DER_KEY_SIZE  60000
+#define MAX_PEM_CERT_SIZE 100000
+#define MAX_DER_KEY_SIZE  100000
 
 //to check if every function is working 
 static void check_ret(char *func_name, int ret) {
@@ -171,10 +171,10 @@ int main(int argc, char** argv) {
     
     clock_t start_total, end_total;
     double total_time_used_ms = 0.0;
-    int num_iterations = 1000;
+    int num_iterations = 100;
     
     // Open CSV file for writing
-    FILE *csv_file = fopen("exp/sp1_sig_gen.csv", "w");
+    FILE *csv_file = fopen("exp/sp1_gen.csv", "w");
     if (csv_file == NULL) {
         printf("Failed to open CSV file for writing.\n");
         return -1;
@@ -191,9 +191,9 @@ int main(int argc, char** argv) {
         char signature_path[BUFFER_SZ];
 
         // Construct file paths for each iteration
-        sprintf(server_cert_path, "sphincs1/it%d/certs/servercert.pem", i);
-        sprintf(server_key_path, "sphincs1/it%d/certs/serverkey.pem", i);
-        sprintf(msg_path, "hmac/msgs/msg_%d.txt", i);
+        sprintf(server_cert_path, "sp3/it%d/certs/servercert.pem", i);
+        sprintf(server_key_path, "sp3/it%d/certs/serverkey.pem", i);
+        sprintf(msg_path, "msgs/msg_%d.txt", i);
         sprintf(signature_path, "signatures/sign_%d.txt", i);
 
         // Process the files

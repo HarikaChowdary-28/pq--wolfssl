@@ -46,34 +46,38 @@
 
 /* PQ-wolfSSL settings */
 #ifdef HAVE_KYBER
-    #define KYBER_MODE     1  /* available modes 1, 3 */
+    #define KYBER_MODE       3  /* available modes 1, 3 */
 #endif
 #ifdef HAVE_DILITHIUM
-    #define DILITHIUM_MODE  2 /* available modes 2, 3 */
-    //#define DILITHIUM_MODE  3
+    #define DILITHIUM_MODE       3 /*available modes 2, 3 */
+    //#define DILITHIUM_MODE       3
 #endif
 
 #ifdef HAVE_FALCON
-    #define FALCON_MODE    1
-   //#define FALCON_MODE    5  /* available modes 1, 5 */
+    #define FALCON_MODE       5
+   //#define FALCON_MODE       5  /* available modes 1, 5 */
 #endif
 
-#ifdef HAVE_SPHINCS
-     #define SPX_TYPE SHA256_128F_SIMPLE
-     #define SPX_TYPE SHA256_128S_SIMPLE    
-      //#define SPX_TYPE SHA256_192F_SIMPLE
-      //#define SPX_TYPE SHA256_192S_SIMPLE
+#ifdef HAVE_SPHINCS   
     /* available types  SHA256_128S_SIMPLE, SHA256_192S_SIMPLE */
-    #define SPX_MODE           1 /* available modes 1, 3 */
+    #define SPX_MODE       1 /* available modes 1, 3 */
+    /* Set curves */
+    #if SPX_MODE == 1
+        #define SPX_TYPE SHA256_128F_SIMPLE
+        #define SPX_TYPE SHA256_128S_SIMPLE 
+    #elif SPX_MODE == 3
+        #define SPX_TYPE SHA256_192F_SIMPLE
+        #define SPX_TYPE SHA256_192S_SIMPLE
+    #endif
 #endif
 
 #ifdef HAVE_XMSS
-    #define XMSS_MODE       1 /* available modes 1, 5 */
-    //#define XMSS_MODE      5
+    #define XMSS_MODE       5 /* available modes 1, 5 */
+    //#define XMSS_MODE       5
 #endif
 
 #ifdef HAVE_ECC
-    #define ECC_MODE       1 /* available modes 1, 3 */
+    #define ECC_MODE       3 /* available modes 1, 3 */
     /* Set curves */
     #if ECC_MODE == 1
         #define ECC_CURVE_SZ 32 /* SECP256R1 curve size in bytes */

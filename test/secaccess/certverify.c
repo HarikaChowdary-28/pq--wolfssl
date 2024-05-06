@@ -29,7 +29,7 @@
 
 #define BUFFER_SZ 60000
 #define NUM_CERTS 100
-#define CSV_FILENAME "exp/SP1-FAL1_certverify.csv"
+#define CSV_FILENAME "exp/too-replace.csv"
 
 #if defined(HAVE_SPHINCS)
     #include <wolfssl/wolfcrypt/sphincs.h>
@@ -67,11 +67,11 @@ int main()
     // Populate file paths for root certificates, intermediate CA certificates, and server certificates
     for (int i = 0; i < NUM_CERTS; i++) {
         char filename[100];
-        snprintf(filename, sizeof(filename), "mixed/sp1-fal1/it%d/certs/rootcert.pem", i + 1);
+        snprintf(filename, sizeof(filename), "to-replace/it%d/certs/rootcert.pem", i + 1);
         rootCertFiles[i] = strdup(filename);
-        snprintf(filename, sizeof(filename), "mixed/sp1-fal1/it%d/certs/icacert.pem", i + 1);
+        snprintf(filename, sizeof(filename), "to-replace/it%d/certs/icacert.pem", i + 1);
         icaCertFiles[i] = strdup(filename);
-        snprintf(filename, sizeof(filename), "mixed/sp1-fal1/it%d/certs/servercert.pem", i + 1);
+        snprintf(filename, sizeof(filename), "to-replace/it%d/certs/servercert.pem", i + 1);
         serverCertFiles[i] = strdup(filename);
     }
 

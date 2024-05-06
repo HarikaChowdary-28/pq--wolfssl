@@ -25,11 +25,11 @@
 #ifndef WOLFSSL_CERT_EXT
     #define WOLFSSL_CERT_EXT
 #endif
-//enable xmss
+//enable to-replace
 #if defined(HAVE_XMSS)
     #include <wolfssl/wolfcrypt/xmss.h>
 
-#define BUFFER_SZ 80000   
+#define BUFFER_SZ 120000  
 #define MAX_PEM_CERT_SIZE 60000
 #define MAX_DER_KEY_SIZE  60000
 
@@ -98,7 +98,7 @@ int process_verification(const char* cert_file, const char* key_file, const char
 
     if (ret == 0) {
         ret = wc_InitXmssKey(&pub_key);
-        check_ret("wc_xmss_init", ret);
+        check_ret("wc_to-replace_init", ret);
     }
  
     if (ret == 0) {
@@ -162,7 +162,7 @@ int process_verification(const char* cert_file, const char* key_file, const char
     if (ret == 0) {
 
         ret = wc_ImportXmssPublic(pub_der_buf, pub_der_len , &pub_key);
-        check_ret("wc_xmss_import_public", ret);
+        check_ret("wc_to-replace_import_public", ret);
     }
         //to read the signature from the given input file and use the public key extracted from certificate and verify the signature using the public key
 
@@ -184,7 +184,7 @@ int process_verification(const char* cert_file, const char* key_file, const char
         return -1; // Handle the error as needed
         }
         ret = wc_XmssVerify(msg, (long long unsigned int*)&outlen, signature, signature_len, &pub_key);
-       check_ret("wc_xmss_verify", ret);
+       check_ret("wc_to-replace_verify", ret);
     }
 
     printf("verify result: %s\n", ret == 0 ? "SUCCESS" : "FAILURE");
@@ -204,10 +204,10 @@ int main(int argc, char** argv) {
     
     clock_t start_total, end_total;
     double total_time_used_ms = 0.0;
-    int num_iterations = 1000;
+    int num_iterations = 100;
     
     // Open CSV file for writing
-    FILE *csv_file = fopen("xmss1_secboot_ver.csv", "w");
+    FILE *csv_file = fopen("to-replace_secboot_ver.csv", "w");
     if (csv_file == NULL) {
         printf("Failed to open CSV file for writing.\n");
         return -1;
@@ -230,19 +230,23 @@ int main(int argc, char** argv) {
         char server_sign[BUFFER_SZ];
 
        // Construct file paths for each iteration
-        sprintf(root_cert_path, "xmss1/it%d/certs/rootcert.pem", i);
-        sprintf(root_key_path, "xmss1/it%d/certs/rootkey.pem", i);
-        sprintf(ica_cert_path, "xmss1/it%d/certs/icacert.pem", i);
-        sprintf(ica_key_path, "xmss1/it%d/certs/icakey.pem", i);
-        sprintf(server_cert_path, "xmss1/it%d/certs/servercert.pem", i);
-        sprintf(server_key_path, "xmss1/it%d/certs/serverkey.pem", i);
-        sprintf(root_sign, "xmss1_signs/root/sign_%d.txt", i);
-        sprintf(ica_sign, "xmss1_signs/ica/sign_%d.txt", i);
-        sprintf(server_sign, "xmss1_signs/server/sign_%d.txt", i);
+        sprintf(root_cert_path, "to-replace/it%d/certs/rootcert.pem", i);
+        sprintf(root_key_path, "to-replace/it%d/certs/rootkey.pem", i);
+        sprintf(ica_cert_path, "to-replace/it%d/certs/icacert.pem", i);
+        sprintf(ica_key_path, "to-replace/it%d/certs/icakey.pem", i);
+        sprintf(server_cert_path, "to-replace/it%d/certs/servercert.pem", i);
+        sprintf(server_key_path, "to-replace/it%d/certs/serverkey.pem", i);
+        sprintf(root_sign, "to-replace_signs/root/sign_%d.txt", i);
+        sprintf(ica_sign, "to-replace_signs/ica/sign_%d.txt", i);
+        sprintf(server_sign, "to-replace_signs/server/sign_%d.txt", i);
+        char msg_0[250] = "/home/sqp1cob/Desktop/git/pq--wolfssl/test/secboot/msg_files/f0.zip";
+        char msg_1[250] = "/home/sqp1cob/Desktop/git/pq--wolfssl/test/secboot/msg_files/f1.img.xz";
+        char msg_2[250] = "/home/sqp1cob/Desktop/git/pq--wolfssl/test/secboot/msg_files/f2.zip";
+        // End file path
 
 
         start = clock();
-        ret = process_verification(root_cert_path, root_key_path, "f0.zip", root_sign);
+        ret = process_verification(root_cert_path, root_key_path, msg_0, root_sign);
         if (ret != 0) return ret;
         end = clock();
         cpu_time_used_ms = (((double) (end - start)) / CLOCKS_PER_SEC)* 1000.0;
@@ -250,7 +254,7 @@ int main(int argc, char** argv) {
 
         // Process and record icasign time
         start = clock();
-        ret = process_verification(ica_cert_path, ica_key_path, "f1.img.xz", ica_sign);
+        ret = process_verification(ica_cert_path, ica_key_path, msg_1, ica_sign);
         if (ret != 0) return ret;
         end = clock();
         cpu_time_used_ms = (((double) (end - start)) / CLOCKS_PER_SEC)* 1000.0;
@@ -258,7 +262,7 @@ int main(int argc, char** argv) {
 
         // Process and record serversign time
         start = clock();
-        ret = process_verification(server_cert_path, server_key_path, "f2.zip", server_sign);
+        ret = process_verification(server_cert_path, server_key_path, msg_2, server_sign);
         if (ret != 0) return ret;
         end = clock();
         cpu_time_used_ms = (((double) (end - start)) / CLOCKS_PER_SEC)* 1000.0;

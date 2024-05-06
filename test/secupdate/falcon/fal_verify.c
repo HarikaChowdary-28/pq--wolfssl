@@ -244,7 +244,7 @@ int main(int argc, char** argv) {
     int num_iterations = 1000;
     
     // Open CSV file for writing
-    FILE *csv_file = fopen("exp/fal1_sig_ver.csv", "w");
+    FILE *csv_file = fopen("exp/fal5_sig_ver.csv", "w");
     if (csv_file == NULL) {
         printf("Failed to open CSV file for writing.\n");
         return -1;
@@ -261,9 +261,9 @@ int main(int argc, char** argv) {
         char signature_path[BUFFER_SZ];
 
      // Construct file paths for each iteration
-        sprintf(server_cert_path, "falcon1/it%d/certs/servercert.pem", i);
-        sprintf(server_key_path, "falcon1/it%d/certs/serverkey.pem", i);
-        sprintf(msg_path, "hmac/msgs/msg_%d.txt", i);
+        sprintf(server_cert_path, "fal5/it%d/certs/servercert.pem", i);
+        sprintf(server_key_path, "fal5/it%d/certs/serverkey.pem", i);
+        sprintf(msg_path, "msgs/msg_%d.txt", i);
         sprintf(signature_path, "signatures/sign_%d.txt", i);
         
         // Process the files

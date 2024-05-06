@@ -192,7 +192,7 @@ int ret;
     int num_iterations = 100;
     
     // Open CSV file for writing
-    FILE *csv_file = fopen("sp3_secboot_ver.csv", "w");
+    FILE *csv_file = fopen("to-replace_secboot_ver.csv", "w");
     if (csv_file == NULL) {
         printf("Failed to open CSV file for writing.\n");
         return -1;
@@ -215,18 +215,22 @@ int ret;
         char server_sign[BUFFER_SZ];
 
         // Construct file paths for each iteration
-        sprintf(root_cert_path, "sphincs3/it%d/certs/rootcert.pem", i);
-        sprintf(root_key_path, "sphincs3/it%d/certs/rootkey.pem", i);
-        sprintf(ica_cert_path, "sphincs3/it%d/certs/icacert.pem", i);
-        sprintf(ica_key_path, "sphincs3/it%d/certs/icakey.pem", i);
-        sprintf(server_cert_path, "sphincs3/it%d/certs/servercert.pem", i);
-        sprintf(server_key_path, "sphincs3/it%d/certs/serverkey.pem", i);
-        sprintf(root_sign, "sp3_signs/root/sign_%d.txt", i);
-        sprintf(ica_sign, "sp3_signs/ica/sign_%d.txt", i);
-        sprintf(server_sign, "sp3_signs/server/sign_%d.txt", i);
+        sprintf(root_cert_path, "to-replace/it%d/certs/rootcert.pem", i);
+        sprintf(root_key_path, "to-replace/it%d/certs/rootkey.pem", i);
+        sprintf(ica_cert_path, "to-replace/it%d/certs/icacert.pem", i);
+        sprintf(ica_key_path, "to-replace/it%d/certs/icakey.pem", i);
+        sprintf(server_cert_path, "to-replace/it%d/certs/servercert.pem", i);
+        sprintf(server_key_path, "to-replace/it%d/certs/serverkey.pem", i);
+        sprintf(root_sign, "to-replace_signs/root/sign_%d.txt", i);
+        sprintf(ica_sign, "to-replace_signs/ica/sign_%d.txt", i);
+        sprintf(server_sign, "to-replace_signs/server/sign_%d.txt", i);
+        char msg_0[250] = "/home/sqp1cob/Desktop/git/pq--wolfssl/test/secboot/msg_files/f0.zip";
+        char msg_1[250] = "/home/sqp1cob/Desktop/git/pq--wolfssl/test/secboot/msg_files/f1.img.xz";
+        char msg_2[250] = "/home/sqp1cob/Desktop/git/pq--wolfssl/test/secboot/msg_files/f2.zip";
+        // End file path
 
         start = clock();
-        ret = process_verification(root_cert_path, root_key_path, "f0.zip", root_sign);
+        ret = process_verification(root_cert_path, root_key_path, msg_0, root_sign);
         if (ret != 0) return ret;
         end = clock();
         cpu_time_used_ms = (((double) (end - start)) / CLOCKS_PER_SEC)* 1000.0;
@@ -234,7 +238,7 @@ int ret;
 
         // Process and record icasign time
         start = clock();
-        ret = process_verification(ica_cert_path, ica_key_path, "f1.img.xz", ica_sign);
+        ret = process_verification(ica_cert_path, ica_key_path, msg_1, ica_sign);
         if (ret != 0) return ret;
         end = clock();
         cpu_time_used_ms = (((double) (end - start)) / CLOCKS_PER_SEC)* 1000.0;
@@ -242,7 +246,7 @@ int ret;
 
         // Process and record serversign time
         start = clock();
-        ret = process_verification(server_cert_path, server_key_path, "f2.zip", server_sign);
+        ret = process_verification(server_cert_path, server_key_path, msg_2, server_sign);
         if (ret != 0) return ret;
         end = clock();
         cpu_time_used_ms = (((double) (end - start)) / CLOCKS_PER_SEC)* 1000.0;

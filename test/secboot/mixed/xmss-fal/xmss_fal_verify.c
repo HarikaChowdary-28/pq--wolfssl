@@ -30,7 +30,7 @@
 #if defined(HAVE_FALCON)
 	#include <wolfssl/wolfcrypt/falcon.h>
 
-#define BUFFER_SZ 60000    
+#define BUFFER_SZ 300000    
 #define MAX_PEM_CERT_SIZE 60000
 #define MAX_DER_KEY_SIZE  60000
 
@@ -346,9 +346,12 @@ int main(int argc, char** argv) {
         sprintf(root_sign, "xmss5_fal5_signs/root/sign_%d.txt", i);
         sprintf(ica_sign, "xmss5_fal5_signs/ica/sign_%d.txt", i);
         sprintf(server_sign, "xmss5_fal5_signs/server/sign_%d.txt", i);
+        char msg_0[250] = "/home/sqp1cob/Desktop/git/pq--wolfssl/test/secboot/msg_files/f0.zip";
+        char msg_1[250] = "/home/sqp1cob/Desktop/git/pq--wolfssl/test/secboot/msg_files/f1.img.xz";
+        char msg_2[250] = "/home/sqp1cob/Desktop/git/pq--wolfssl/test/secboot/msg_files/f2.zip";
 
         start = clock();
-        ret = process_verification(root_cert_path, root_key_path, "f0.zip", root_sign);
+        ret = process_verification(root_cert_path, root_key_path, msg_0, root_sign);
         if (ret != 0) return ret;
         end = clock();
         cpu_time_used_ms = (((double) (end - start)) / CLOCKS_PER_SEC)* 1000.0;
@@ -356,7 +359,7 @@ int main(int argc, char** argv) {
 
         // Process and record icasign time
         start = clock();
-        ret = process_verification1(ica_cert_path, ica_key_path, "f1.img.xz", ica_sign);
+        ret = process_verification1(ica_cert_path, ica_key_path, msg_1, ica_sign);
         if (ret != 0) return ret;
         end = clock();
         cpu_time_used_ms = (((double) (end - start)) / CLOCKS_PER_SEC)* 1000.0;
@@ -364,7 +367,7 @@ int main(int argc, char** argv) {
 
         // Process and record serversign time
         start = clock();
-        ret = process_verification1(server_cert_path, server_key_path, "f2.zip", server_sign);
+        ret = process_verification1(server_cert_path, server_key_path, msg_2, server_sign);
         if (ret != 0) return ret;
         end = clock();
         cpu_time_used_ms = (((double) (end - start)) / CLOCKS_PER_SEC)* 1000.0;
